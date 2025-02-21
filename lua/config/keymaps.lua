@@ -1,20 +1,23 @@
 -- disable default keymap
--- 删除普通模式和终端模式下的 <C-h> 映射
-vim.keymap.del({ "n", "t" }, "<C-h>")
--- 删除普通模式和终端模式下的 <C-j> 映射
-vim.keymap.del({ "n", "t" }, "<C-j>")
--- 删除普通模式和终端模式下的 <C-k> 映射
-vim.keymap.del({ "n", "t" }, "<C-k>")
--- 删除普通模式和终端模式下的 <C-l> 映射
-vim.keymap.del({ "n", "t" }, "<C-l>")
--- 删除普通模式、插入模式和可视模式下的 <A-j> 映射
-vim.keymap.del({ "n", "i", "v" }, "<A-j>")
--- 删除普通模式、插入模式和可视模式下的 <A-k> 映射
-vim.keymap.del({ "n", "i", "v" }, "<A-k>")
--- 删除普通模式下的 <S-h> 映射
-vim.keymap.del("n", "<S-h>")
--- 删除普通模式下的 <S-l> 映射
-vim.keymap.del("n", "<S-l>")
+-- 安全地删除键映射的函数
+local function safe_del_keymap(modes, key)
+  for _, mode in ipairs(type(modes) == "table" and modes or {modes}) do
+    -- 检查映射是否存在
+    if vim.fn.maparg(key, mode) ~= "" then
+      vim.keymap.del(mode, key)
+    end
+  end
+end
+
+-- 安全删除默认键映射
+safe_del_keymap({ "n", "t" }, "<C-h>")
+safe_del_keymap({ "n", "t" }, "<C-j>")
+safe_del_keymap({ "n", "t" }, "<C-k>")
+safe_del_keymap({ "n", "t" }, "<C-l>")
+safe_del_keymap({ "n", "i", "v" }, "<A-j>")
+safe_del_keymap({ "n", "i", "v" }, "<A-k>")
+safe_del_keymap("n", "<S-h>")
+safe_del_keymap("n", "<S-l>")
 
 -- 加速的 j 和 k 键映射，带有描述信息
 vim.keymap.set("n", "j", "<Plug>(accelerated_jk_gj)", { noremap = true, silent = true, desc = "Accelerated Down" })
